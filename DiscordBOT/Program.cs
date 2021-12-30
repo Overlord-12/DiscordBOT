@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using DSharpPlus;
+using Newtonsoft.Json;
 
 namespace DiscordBOT
 {
@@ -17,7 +20,7 @@ namespace DiscordBOT
         {
             var discord = new DiscordClient(new DiscordConfiguration()
             {
-                Token = "",
+                Token = ReadJson(),
                 TokenType = TokenType.Bot,
                 Intents = DiscordIntents.AllUnprivileged
             });
@@ -48,6 +51,17 @@ namespace DiscordBOT
 
             return isMessageBot && !isBot;
         }
+
+        private static string ReadJson()
+        {
+            var json = string.Empty;
+            using (var fs = File.OpenRead(@"C:\Users\danya\source\repos\DiscordBOT\DiscordBOT\config.json"))
+            using (var sr = new StreamReader(fs, new UTF8Encoding(false)))
+                json = sr.ReadToEnd();
+            var myToken = JsonConvert.DeserializeObject<RootJson>(json).Token;
+            return myToken;
+        }
+
 
         private static string CheckMessage()
         {
