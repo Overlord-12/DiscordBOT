@@ -1,4 +1,4 @@
-﻿using DiscordBOT;
+﻿
 using DSharpPlus;
 using Newtonsoft.Json;
 using System;
@@ -51,7 +51,7 @@ namespace BotConfiguration
         private static string ReadJson()
         {
             var json = string.Empty;
-            using (var fs = File.OpenRead(@"C:\Users\danya\source\repos\DiscordBOT\DiscordBOT\config.json"))
+            using (var fs = File.OpenRead(@"C:\Users\danya\source\repos\DiscordBOT\BotConfiguration\config.json"))
             using (var sr = new StreamReader(fs, new UTF8Encoding(false)))
                 json = sr.ReadToEnd();
             var myToken = JsonConvert.DeserializeObject<RootJson>(json).Token;
@@ -67,6 +67,8 @@ namespace BotConfiguration
                     return "Normalin";
                 case "че делаешь":
                     return "Как обычно, ничего";
+                case "проверка":
+                    return "Все работает стабильно";
                 default:
                     return "Я хз че это значит";
             }
