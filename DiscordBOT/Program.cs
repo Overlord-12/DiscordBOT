@@ -10,7 +10,6 @@ namespace DiscordBOT
 {
     class Program
     {
-        private static string userMessage = "";
 
         static void Main(string[] args)
         {
