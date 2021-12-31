@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DSharpPlus;
 using Newtonsoft.Json;
-using DiscordBotLibrary;
+using BotConfiguration;
 
 namespace DiscordBOT
 {
@@ -14,10 +14,9 @@ namespace DiscordBOT
         static void Main(string[] args)
         {
             Bot bot = new Bot();
-            bot.DiscrodClientConnectAsync().GetAwaiter().GetResult();
-           
+            bot.DiscrodStartClientAsync().GetAwaiter().GetResult();
         }
 
-
     }
+
 }
