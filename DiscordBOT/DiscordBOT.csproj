@@ -11,4 +11,8 @@
     <PackageReference Include="DSharpPlus.Interactivity" Version="4.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BotConfiguration\BotConfiguration.csproj" />
+  </ItemGroup>
+
 </Project>
