@@ -23,8 +23,7 @@ namespace BotConfiguration
 
             discord.MessageCreated += async (s, e) =>
             {
-
-                if (isMessageBot(e.Author.IsBot, e.Message.Content))
+                if (isMessageBot(e.Author.IsBot, e.Message.Content, s.CurrentUser.Username))
                 {
                     var answer = CheckMessage();
                     await e.Message.RespondAsync(answer);
@@ -38,10 +37,10 @@ namespace BotConfiguration
 
         }
 
-        private static bool isMessageBot(bool isBot, string message)
+        private static bool isMessageBot(bool isBot, string message, string NameBot)
         {
             string[] check = message.Split(",");
-            bool isMessageBot = check[0] == "Бот" ? true : false;
+            bool isMessageBot = check[0] == "Бот" || check[0] == NameBot ? true : false;
             if (isMessageBot)
                 userMessage = check[1];
 
