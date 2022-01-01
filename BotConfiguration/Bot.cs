@@ -1,5 +1,6 @@
-﻿
+﻿using BotConfiguration.Commands;
 using DSharpPlus;
+using DSharpPlus.CommandsNext;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -30,7 +31,11 @@ namespace BotConfiguration
                 }
 
             };
-
+            var commands = discord.UseCommandsNext(new CommandsNextConfiguration()
+            {
+                StringPrefixes = new[] { "!"}
+            });
+            commands.RegisterCommands<CommandModule>();
 
             await discord.ConnectAsync();
             await Task.Delay(-1);
