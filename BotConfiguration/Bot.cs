@@ -1,5 +1,6 @@
-﻿
+﻿using BotConfiguration.Commands;
 using DSharpPlus;
+using DSharpPlus.CommandsNext;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -23,25 +24,28 @@ namespace BotConfiguration
 
             discord.MessageCreated += async (s, e) =>
             {
-
-                if (isMessageBot(e.Author.IsBot, e.Message.Content))
+                if (isMessageBot(e.Author.IsBot, e.Message.Content, s.CurrentUser.Username))
                 {
                     var answer = CheckMessage();
                     await e.Message.RespondAsync(answer);
                 }
 
             };
-
+            var commands = discord.UseCommandsNext(new CommandsNextConfiguration()
+            {
+                StringPrefixes = new[] { "!"}
+            });
+            commands.RegisterCommands<CommandModule>();
 
             await discord.ConnectAsync();
             await Task.Delay(-1);
 
         }
 
-        private static bool isMessageBot(bool isBot, string message)
+        private static bool isMessageBot(bool isBot, string message, string NameBot)
         {
             string[] check = message.Split(",");
-            bool isMessageBot = check[0] == "Бот" ? true : false;
+            bool isMessageBot = check[0] == "Бот" || check[0] == NameBot ? true : false;
             if (isMessageBot)
                 userMessage = check[1];
 
