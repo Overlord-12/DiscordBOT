@@ -1,6 +1,7 @@
 ﻿using BotConfiguration.Commands;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Entities;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -31,9 +32,10 @@ namespace BotConfiguration
                 }
 
             };
+
             var commands = discord.UseCommandsNext(new CommandsNextConfiguration()
             {
-                StringPrefixes = new[] { "!"}
+                StringPrefixes = new[] { "!" }
             });
             commands.RegisterCommands<CommandModule>();
 
@@ -63,19 +65,29 @@ namespace BotConfiguration
         }
 
 
-        private static string CheckMessage()
+        private static DiscordMessageBuilder CheckMessage()
         {
+            var builder = new DiscordMessageBuilder();
+
             switch (userMessage.TrimStart(' ').TrimEnd(' ').ToLower())
             {
                 case "как дела":
-                    return "Normalin";
+                    return builder.WithContent("Normalin");
                 case "че делаешь":
-                    return "Как обычно, ничего";
+                    return builder.WithContent("Ничего"); ;
                 case "проверка":
-                    return "Все работает стабильно";
+                    return builder.WithContent("Все работает стабильно");
+                case "кнопка":
+                    return builder.WithContent("Теперь у меня есть кнопки").AddComponents(CreateButton());
                 default:
-                    return "Я хз че это значит";
+                    return builder.WithContent("Я хз че это значит");
             }
+        }
+
+        private static DiscordButtonComponent CreateButton()
+        {
+            var myButton = new DiscordButtonComponent(ButtonStyle.Primary, "my_custom_id", "This is a button!");
+            return myButton;
         }
     }
 }
