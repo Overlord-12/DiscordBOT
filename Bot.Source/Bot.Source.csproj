@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BotConfiguration\Bot.Configuration.csproj" />
+    <ProjectReference Include="..\Bot.Configuration\Bot.Configuration.csproj" />
   </ItemGroup>
 
 </Project>
