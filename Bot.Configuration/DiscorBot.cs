@@ -3,10 +3,11 @@ using Bot.Configuration.Commands;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
-using Newtonsoft.Json;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Bot.Global;
+using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Bot.Configuration
 {
@@ -15,28 +16,42 @@ namespace Bot.Configuration
 	/// </summary>
 	public class DiscorBot
     {
-        private static string USER_MESSAGE = "";
+        private static string m_UserMessage = "";
+        private static List<string> m_BanWords = new List<string>();
 
 		/// <summary>
 		/// Starts the discrod client asynchronous.
 		/// </summary>
 		public async Task StartDiscrodClientAsync()
         {
+            string botToken = JsonUtils.ReadJson<TokenModelJson>(Constants.BOT_TOKEN_JSON_PATH).Token;
+			if (string.IsNullOrEmpty(botToken))
+			{
+                return;
+			}
+
+            UploadBanWords();
             DiscordClient discordClient = new DiscordClient(new DiscordConfiguration()
             {
-                Token = ReadJson(),
+                Token = botToken,
                 TokenType = TokenType.Bot,
-                Intents = DiscordIntents.AllUnprivileged
+                MinimumLogLevel = LogLevel.Debug,
+                Intents = DiscordIntents.AllUnprivileged | DiscordIntents.DirectMessages
+                | DiscordIntents.GuildMessages | DiscordIntents.MessageContents
             });
 
             discordClient.MessageCreated += async (s, e) =>
             {
-                if (IsMessageBot(e.Author.IsBot, e.Message.Content, s.CurrentUser.Username))
+                if (IsUseBanWord(e.Message.Content))
                 {
-                    var answer = CheckMessage();
-                    await e.Message.RespondAsync(answer);
+                    e.Message.RespondAsync("Осуждаю");
                 }
 
+                if (IsMessageBot(e.Author.IsBot, e.Message.Content, s.CurrentUser.Username))
+                {
+                    DiscordMessageBuilder answer = CheckMessage();
+                    await e.Message.RespondAsync(answer);
+                }
             };
 
             CommandsNextExtension commands = discordClient.UseCommandsNext(new CommandsNextConfiguration()
@@ -53,34 +68,36 @@ namespace Bot.Configuration
         {
             string[] check = message.Split(",");
             bool isMessageBot = check[0] == "Бот" || check[0] == NameBot ? true : false;
-            if (isMessageBot)
+            if (!isMessageBot)
 			{
-                USER_MESSAGE = check[1];
+                m_UserMessage = check[1];
             }
 
             return isMessageBot && !isBot;
         }
 
-        private static string ReadJson()
-        {
-            string json = string.Empty;
-            using (var fs = File.OpenRead(@""))
+        private void UploadBanWords()
+		{
+            BanWordsModelJson banWordsModel = 
+                JsonUtils.ReadJson<BanWordsModelJson>(Constants.BAN_WORDS_JSON_PATH);
+			foreach (BanWords banWords in banWordsModel.BanWords)
 			{
-                using (var sr = new StreamReader(fs, new UTF8Encoding(false)))
-                {
-                    json = sr.ReadToEnd();
-                }
-            }
-               
-            string myToken = JsonConvert.DeserializeObject<RootJson>(json).Token;
-            return myToken;
+                m_BanWords.Add(banWords.Word);
+			}
         }
 
+        private bool IsUseBanWord(string userMessage)
+		{
+            bool result = m_BanWords.Any(x => userMessage.ToLower()
+            .Contains(x.ToLower()));
+            return result;
+		}
 
-        private static DiscordMessageBuilder CheckMessage()
+        private DiscordMessageBuilder CheckMessage()
         {
             DiscordMessageBuilder builder = new DiscordMessageBuilder();
-            switch (USER_MESSAGE.TrimStart(' ').TrimEnd(' ').ToLower())
+
+            switch (m_UserMessage.TrimStart(' ').TrimEnd(' ').ToLower())
             {
                 case "как дела":
                     return builder.WithContent("Normalin");
