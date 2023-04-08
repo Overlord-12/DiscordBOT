@@ -1,14 +1,14 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace BotConfiguration.Commands
+namespace Bot.Configuration.Commands
 {
-    public class CommandModule : BaseCommandModule
+	/// <summary>
+	/// Command for discord bot
+	/// </summary>
+	/// <seealso cref="BaseCommandModule" />
+	public class CommandModule : BaseCommandModule
     {
         [Command("greet")]
         public async Task GreetCommand(CommandContext ctx)
