@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Class for parsing json model
 	/// </summary>
-	public struct RootJson
+	public class TokenModelJson
     {
 		/// <summary>
 		/// Gets or sets the token.
